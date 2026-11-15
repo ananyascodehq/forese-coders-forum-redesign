@@ -1,0 +1,72 @@
+import {
+  ArrowDownUp,
+  Boxes,
+  Brackets,
+  Brain,
+  BrainCircuit,
+  Braces,
+  ChartLine,
+  ChartScatter,
+  Code,
+  Coffee,
+  Cpu,
+  FileCode,
+  GitFork,
+  Layers,
+  Link2,
+  ListOrdered,
+  Network,
+  Repeat,
+  Route,
+  Search,
+  Shuffle,
+  Split,
+  Table2,
+  Target,
+  Terminal,
+  Workflow,
+  type LucideIcon,
+} from "lucide-react";
+import type { TopicKey } from "./topics";
+
+type Item = { caption: string; Icon: LucideIcon };
+
+/** Seven icons per topic, one per card on the sphere. */
+export const ICONS: Record<TopicKey, Item[]> = {
+  ds: [
+    { caption: "Arrays", Icon: Brackets },
+    { caption: "Linked list", Icon: Link2 },
+    { caption: "Stacks", Icon: Layers },
+    { caption: "Trees", Icon: GitFork },
+    { caption: "Graphs", Icon: Network },
+    { caption: "Queues", Icon: ListOrdered },
+    { caption: "Hash tables", Icon: Table2 },
+  ],
+  algo: [
+    { caption: "Sorting", Icon: ArrowDownUp },
+    { caption: "Searching", Icon: Search },
+    { caption: "Recursion", Icon: Repeat },
+    { caption: "Complexity", Icon: ChartLine },
+    { caption: "Pathfinding", Icon: Route },
+    { caption: "Divide", Icon: Split },
+    { caption: "Swaps", Icon: Shuffle },
+  ],
+  java: [
+    { caption: "Syntax", Icon: Code },
+    { caption: "Java", Icon: Coffee },
+    { caption: "Objects", Icon: Boxes },
+    { caption: "Output", Icon: Terminal },
+    { caption: "Blocks", Icon: Braces },
+    { caption: "Files", Icon: FileCode },
+    { caption: "Code structure", Icon: Workflow },
+  ],
+  ml: [
+    { caption: "Neural nets", Icon: BrainCircuit },
+    { caption: "Learning", Icon: Brain },
+    { caption: "Regression", Icon: ChartScatter },
+    { caption: "Evaluation", Icon: Target },
+    { caption: "Pipelines", Icon: Workflow },
+    { caption: "Compute", Icon: Cpu },
+    { caption: "Preprocessing", Icon: ArrowDownUp },
+  ],
+};

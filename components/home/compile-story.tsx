@@ -1,14 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import {
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-  type MotionValue,
-} from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 import { GlyphField } from "./glyph-field";
 
 const STAGES = [
@@ -30,49 +23,41 @@ const STAGES = [
   },
 ];
 
-function StageCopy({
-  index,
-  name,
-  body,
-  progress,
-}: {
-  index: number;
-  name: string;
-  body: string;
-  progress: MotionValue<number>;
-}) {
-  const n = STAGES.length;
-  // Keep every scroll offset inside 0..1 and non-decreasing (required for scroll-linked WAAPI).
-  const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
-  const start = index / n;
-  const end = (index + 1) / n;
-  const a = clamp01(start - 0.01);
-  const b = clamp01(start + 0.03);
-  const c = clamp01(end - 0.03);
-  const d = clamp01(end + 0.01);
-  const opacity = useTransform(progress, [a, b, c, d], [0, 1, 1, 0]);
-  const y = useTransform(progress, [a, b], [28, 0]);
+// Each stage types its name first, then its body. `start` is the character offset in the whole script.
+const SCRIPT = STAGES.map((s, i) => {
+  const start = STAGES.slice(0, i).reduce((n, p) => n + p.name.length + p.body.length, 0);
+  return { ...s, start, total: s.name.length + s.body.length };
+});
+const TOTAL_CHARS = SCRIPT.reduce((n, s) => n + s.total, 0);
 
+/** Typed text followed by the untyped remainder, hidden, so the layout never jumps while typing. */
+function Typed({ text, typed, caret }: { text: string; typed: number; caret: boolean }) {
+  const n = Math.max(0, Math.min(text.length, typed));
   return (
-    <motion.div style={{ opacity, y }} className="absolute inset-0 flex flex-col justify-center">
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-primary-soft)]">
-        0{index + 1} / 0{n}
-      </p>
-      <p className="mt-4 font-heading text-[clamp(3.5rem,12vw,9.5rem)] font-bold uppercase leading-[0.88] tracking-[-0.04em] text-[var(--cf-text)]">
-        {name}
-      </p>
-      <p className="mt-6 max-w-md text-lg leading-relaxed text-[var(--cf-text-muted)]">{body}</p>
-    </motion.div>
+    <>
+      {text.slice(0, n)}
+      {caret && (
+        <span
+          aria-hidden="true"
+          className="ml-1 inline-block h-[0.9em] w-[0.5em] translate-y-[0.1em] animate-pulse bg-[var(--cf-primary)]"
+        />
+      )}
+      <span className="opacity-0">{text.slice(n)}</span>
+    </>
   );
 }
 
 export function CompileStory() {
   const ref = useRef<HTMLElement>(null);
   const progress = useRef(0);
+  const [count, setCount] = useState(0);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     progress.current = v;
+    // Finish typing at ~90% so the last line rests on screen before the section unpins.
+    const next = Math.round(Math.min(1, v / 0.9) * TOTAL_CHARS);
+    setCount((prev) => (prev === next ? prev : next));
   });
 
   if (reduce) {
@@ -94,36 +79,56 @@ export function CompileStory() {
     );
   }
 
+  // The stage currently being typed gets the caret; once everything is typed it stays on the last one.
+  const activeIndex = SCRIPT.findIndex((s) => count < s.start + s.total);
+  const active = activeIndex === -1 ? SCRIPT.length - 1 : activeIndex;
+
   return (
-    <section ref={ref} aria-labelledby="compile-title" className="relative h-[260svh]">
+    <section ref={ref} aria-labelledby="compile-title" className="relative h-[240svh]">
       <h2 id="compile-title" className="sr-only">
         How the forum works
       </h2>
+      {/* Screen readers get the full text at once; the typing below is visual only. */}
+      <ol className="sr-only">
+        {STAGES.map((s) => (
+          <li key={s.name}>
+            {s.name}. {s.body}
+          </li>
+        ))}
+      </ol>
+
       <div className="sticky top-16 flex h-[calc(100svh-4rem)] flex-col overflow-hidden">
         <GlyphField mode="compile" progressRef={progress} className="absolute inset-0 h-full w-full" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[var(--cf-bg)]/80" />
 
-        {/* Soft scrim so the copy stays readable over the field. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[var(--cf-bg)] via-[var(--cf-bg)]/70 to-transparent"
-        />
-
-        <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-10">
+        <div aria-hidden="true" className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-10">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-text-muted)]">
-            The forum compiles
+            <span className="text-[var(--cf-primary)]">$</span> the-forum --compile
           </p>
 
-          <div className="relative flex-1">
-            {STAGES.map((s, i) => (
-              <StageCopy key={s.name} index={i} name={s.name} body={s.body} progress={scrollYProgress} />
-            ))}
+          <div className="flex flex-1 flex-col justify-center gap-[clamp(1rem,3.5vh,2.5rem)]">
+            {SCRIPT.map((s, i) => {
+              const local = count - s.start;
+              const bodyTyped = local - s.name.length;
+              const isActive = i === active;
+              return (
+                <div key={s.name} className="grid gap-x-8 gap-y-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] md:items-baseline">
+                  <p className="font-heading text-[clamp(2.5rem,7.5vw,6rem)] font-bold uppercase leading-[0.9] tracking-[-0.04em] text-[var(--cf-text)]">
+                    <span className="mr-3 font-mono text-[0.25em] font-normal tracking-normal text-[var(--cf-primary-soft)]">
+                      0{i + 1}
+                    </span>
+                    <Typed text={s.name} typed={local} caret={isActive && bodyTyped <= 0} />
+                  </p>
+                  <p className="font-mono text-[clamp(0.9rem,1.5vw,1.15rem)] leading-relaxed text-[var(--cf-text-muted)]">
+                    <Typed text={s.body} typed={bodyTyped} caret={isActive && bodyTyped > 0} />
+                  </p>
+                </div>
+              );
+            })}
           </div>
 
           <div className="h-px w-full bg-[var(--cf-border)]">
-            <motion.div
-              className="h-px origin-left bg-[var(--cf-primary)]"
-              style={{ scaleX: scrollYProgress }}
-            />
+            <motion.div className="h-px origin-left bg-[var(--cf-primary)]" style={{ scaleX: scrollYProgress }} />
           </div>
         </div>
       </div>

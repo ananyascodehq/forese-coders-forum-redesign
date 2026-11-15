@@ -91,6 +91,8 @@ export function GlyphField({ mode, progressRef, className }: Props) {
       // w/h are fractional CSS pixels; the canvas truncates them, so index with its integer size.
       const iw = off.width;
       const ih = off.height;
+      // A zero-size canvas (hidden or mid-transition) cannot be read; the ResizeObserver rebuilds once it has size.
+      if (iw < 1 || ih < 1) return;
       const data = o.getImageData(0, 0, iw, ih).data;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -105,6 +107,7 @@ export function GlyphField({ mode, progressRef, className }: Props) {
       const rect = canvas.getBoundingClientRect();
       w = rect.width;
       h = rect.height;
+      if (w < 1 || h < 1) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);

@@ -3,6 +3,7 @@ import { WhyJoin } from "@/components/mentorship/why-join";
 import { TopicSphere } from "@/components/mentorship/topic-sphere";
 import { TOPICS } from "@/components/mentorship/topics";
 import { Reveal } from "@/components/reveal";
+import { Ribbon } from "@/components/ribbon";
 
 export const metadata = {
   title: "Mentorship | Coders' Forum",
@@ -32,33 +33,25 @@ export default function MentorshipPage() {
           </Reveal>
 
           {/* Sphere comes before the text in the DOM so phones read title, sphere, text. */}
-          <div className="relative z-0 mt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:pt-28">
+          <div className="relative z-0 mt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:pt-52">
             <TopicSphere />
           </div>
 
           <Reveal delay={0.1} className="mt-10 lg:col-start-1 lg:row-start-2 lg:mt-8 lg:self-start">
-            <p className="font-heading text-[clamp(1.6rem,3vw,2.6rem)] font-bold leading-[1.05] tracking-[-0.02em]">
+            <div aria-hidden="true" className="h-px w-16 bg-[var(--cf-primary)]" />
+            <p className="mt-6 font-heading text-[clamp(1.5rem,2.6vw,2.25rem)] font-semibold leading-[1.1] tracking-[-0.02em]">
               Classroom theory, <span className="text-[var(--cf-primary)]">meet real code.</span>
             </p>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--cf-text)]/85 md:text-lg">
+            <p className="mt-5 max-w-lg text-base leading-[1.75] text-[var(--cf-text-muted)] md:text-[1.05rem]">
               Our Student Mentors will guide participants through essential programming concepts. This curriculum is
               designed to bridge the gap between classroom theory and practical application, equipping you with the exact
               skills required for academics, personal projects, competitive programming, and upcoming placements.
             </p>
-            <p className="mt-8 font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-text-muted)]">Built for</p>
-            <ul className="mt-3 flex flex-wrap gap-2">
-              {OUTCOMES.map((o) => (
-                <li
-                  key={o}
-                  className="border border-[var(--cf-primary)]/40 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.1em] text-[var(--cf-primary-soft)]"
-                >
-                  {o}
-                </li>
-              ))}
-            </ul>
           </Reveal>
         </div>
       </section>
+
+      <Ribbon items={OUTCOMES} label="Built for" />
 
       {/* Topics */}
       <section aria-labelledby="topics-title" className="border-t border-[var(--cf-border)]">

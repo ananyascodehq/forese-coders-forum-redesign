@@ -16,6 +16,16 @@ It started as a redesign and kept growing, one "can we make it pop a bit more" a
 
 Dark theme only: near-black, cream and acid lime. Tokens live in `app/globals.css` as `--cf-*` variables.
 
+## Screenshots
+
+**Home**
+
+![Home page: the Coders' Forum wordmark resolving out of code glyphs, with the tagline and join button](docs/screenshots/home.png)
+
+**Mentorship**
+
+![Mentorship page: giant title, intro text, the 3D topic sphere and the Built for ribbon](docs/screenshots/mentorship.png)
+
 ## Stack
 
 - [Next.js](https://nextjs.org) 16 (App Router) and React 19

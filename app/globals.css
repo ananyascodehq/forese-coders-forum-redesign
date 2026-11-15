@@ -135,3 +135,16 @@
     }
   }
 }
+
+/* Rotating ribbon: two identical rows side by side, shifted by half the track for a seamless loop. */
+@keyframes cf-ribbon {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.cf-ribbon-track {
+  animation: cf-ribbon 50s linear infinite;
+}
+.cf-ribbon-track:hover {
+  animation-play-state: paused;
+}

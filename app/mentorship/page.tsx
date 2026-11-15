@@ -15,32 +15,37 @@ const OUTCOMES = ["Academics", "Personal projects", "Competitive programming", "
 export default function MentorshipPage() {
   return (
     <main className="flex-1">
-      {/* Intro */}
-      <section aria-labelledby="mentorship-title" className="mx-auto max-w-6xl px-6 pb-16 pt-20 md:pb-20 md:pt-28">
-        <Reveal>
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-primary-soft)]">
-            <span className="text-[var(--cf-primary)]">$</span> mentorship --curriculum
-          </p>
-          <h1
-            id="mentorship-title"
-            className="mt-6 font-heading text-[clamp(3rem,9.5vw,8rem)] font-bold uppercase leading-[0.88] tracking-[-0.04em]"
-          >
-            Classroom
-            <br />
-            theory,
-            <br />
-            <span className="text-[var(--cf-primary)]">meet real code.</span>
-          </h1>
-        </Reveal>
+      {/* Hero: giant title across the top, content on the left, sphere on the right. */}
+      <section aria-labelledby="mentorship-title" className="overflow-x-clip">
+        <div className="mx-auto max-w-6xl px-6 pb-16 pt-14 md:pb-24 md:pt-20 lg:grid lg:grid-cols-[1fr_minmax(0,34rem)] lg:grid-rows-[auto_1fr] lg:gap-x-10">
+          {/* Title spans both columns and sits above the sphere; it ignores the pointer so cards underneath stay hoverable. */}
+          <Reveal className="pointer-events-none relative z-10 lg:col-span-2 lg:col-start-1 lg:row-start-1">
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-primary-soft)]">
+              <span className="text-[var(--cf-primary)]">$</span> mentorship --curriculum
+            </p>
+            <h1
+              id="mentorship-title"
+              className="mt-5 font-heading text-[clamp(2.25rem,13vw,3.75rem)] font-bold uppercase leading-[0.88] tracking-[-0.045em] md:text-[clamp(4rem,12.5vw,11.5rem)]"
+            >
+              Mentorship
+            </h1>
+          </Reveal>
 
-        <Reveal delay={0.1} className="mt-10 grid gap-10 md:grid-cols-[1.3fr_1fr] md:items-end">
-          <p className="max-w-2xl text-lg leading-relaxed text-[var(--cf-text)]/85 md:text-xl">
-            Our Student Mentors will guide participants through essential programming concepts. This curriculum is
-            designed to bridge the gap between classroom theory and practical application, equipping you with the exact
-            skills required for academics, personal projects, competitive programming, and upcoming placements.
-          </p>
-          <div>
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-text-muted)]">Built for</p>
+          {/* Sphere comes before the text in the DOM so phones read title, sphere, text. */}
+          <div className="relative z-0 mt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:pt-28">
+            <TopicSphere />
+          </div>
+
+          <Reveal delay={0.1} className="mt-10 lg:col-start-1 lg:row-start-2 lg:mt-8 lg:self-start">
+            <p className="font-heading text-[clamp(1.6rem,3vw,2.6rem)] font-bold leading-[1.05] tracking-[-0.02em]">
+              Classroom theory, <span className="text-[var(--cf-primary)]">meet real code.</span>
+            </p>
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--cf-text)]/85 md:text-lg">
+              Our Student Mentors will guide participants through essential programming concepts. This curriculum is
+              designed to bridge the gap between classroom theory and practical application, equipping you with the exact
+              skills required for academics, personal projects, competitive programming, and upcoming placements.
+            </p>
+            <p className="mt-8 font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-text-muted)]">Built for</p>
             <ul className="mt-3 flex flex-wrap gap-2">
               {OUTCOMES.map((o) => (
                 <li
@@ -51,23 +56,7 @@ export default function MentorshipPage() {
                 </li>
               ))}
             </ul>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* Gallery sphere */}
-      <section aria-labelledby="sphere-title" className="overflow-x-clip border-t border-[var(--cf-border)]">
-        <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
-          <Reveal className="mb-6 text-center md:mb-10">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-primary-soft)]">What you will learn</p>
-            <h2
-              id="sphere-title"
-              className="mt-4 font-heading text-[clamp(2.5rem,6vw,4.75rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em]"
-            >
-              Four topics. <span className="text-[var(--cf-primary)]">One sphere.</span>
-            </h2>
           </Reveal>
-          <TopicSphere />
         </div>
       </section>
 

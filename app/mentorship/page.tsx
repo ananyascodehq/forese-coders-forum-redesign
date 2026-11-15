@@ -1,7 +1,7 @@
 import { MagneticLink } from "@/components/magnetic-link";
 import { WhyJoin } from "@/components/mentorship/why-join";
 import { TopicSphere } from "@/components/mentorship/topic-sphere";
-import { TOPICS } from "@/components/mentorship/topics";
+import { TopicPanels } from "@/components/mentorship/topic-panels";
 import { Reveal } from "@/components/reveal";
 import { Ribbon } from "@/components/ribbon";
 
@@ -53,51 +53,27 @@ export default function MentorshipPage() {
 
       <Ribbon items={OUTCOMES} label="Built for" />
 
-      {/* Topics */}
+      {/* Topics we cover */}
       <section aria-labelledby="topics-title" className="border-t border-[var(--cf-border)]">
-        <div className="mx-auto max-w-6xl px-6 pt-10">
-          <h2 id="topics-title" className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-text-muted)]">
-            Topics we cover / 04 topics
-          </h2>
+        <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
+          <Reveal className="mb-8 flex flex-wrap items-end justify-between gap-4 md:mb-12">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-primary-soft)]">
+                Topics we cover / 04
+              </p>
+              <h2
+                id="topics-title"
+                className="mt-4 font-heading text-[clamp(2.25rem,5vw,4rem)] font-bold uppercase leading-[0.95] tracking-[-0.03em]"
+              >
+                What we teach
+              </h2>
+            </div>
+            <p className="max-w-xs text-sm leading-relaxed text-[var(--cf-text-muted)]">
+              Hover a panel to open it. On a phone, tap.
+            </p>
+          </Reveal>
+          <TopicPanels />
         </div>
-
-        <ol className="mt-6">
-          {TOPICS.map((t, i) => (
-            <Reveal as="li" key={t.name} className="group border-t border-[var(--cf-border)] last:border-b">
-              <div className="transition-colors duration-300 hover:bg-[var(--cf-surface)]">
-                <div className="mx-auto grid max-w-6xl gap-x-10 gap-y-6 px-6 py-10 md:grid-cols-[4rem_1.2fr_1fr] md:py-14">
-                  <p className="font-mono text-sm text-[var(--cf-primary-soft)]">0{i + 1}</p>
-
-                  <div>
-                    <h3 className="font-heading text-[clamp(2.25rem,6vw,4.75rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] transition-colors duration-300 group-hover:text-[var(--cf-primary)]">
-                      {t.name}
-                    </h3>
-                    <p className="mt-5 max-w-lg text-base leading-relaxed text-[var(--cf-text-muted)] md:text-lg">
-                      {t.body}
-                    </p>
-                    <ul className="mt-5 flex flex-wrap gap-2">
-                      {t.tags.map((topic) => (
-                        <li
-                          key={topic}
-                          className="border border-[var(--cf-border)] px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-[0.1em] text-[var(--cf-text-muted)] transition-colors group-hover:border-[var(--cf-primary)]/50 group-hover:text-[var(--cf-text)]"
-                        >
-                          {topic}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <pre
-                    aria-hidden="true"
-                    className="hidden self-center overflow-hidden border border-[var(--cf-border)] bg-[var(--cf-bg)] p-5 font-mono text-[0.8rem] leading-7 text-[var(--cf-text-muted)]/70 transition-colors duration-300 group-hover:border-[var(--cf-primary)]/50 group-hover:text-[var(--cf-primary-soft)] md:block"
-                  >
-                    {t.snippet.join("\n")}
-                  </pre>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </ol>
       </section>
 
       <WhyJoin />

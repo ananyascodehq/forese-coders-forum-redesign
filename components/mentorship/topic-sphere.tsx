@@ -38,13 +38,12 @@ export function TopicSphere() {
   const stageRef = useRef<HTMLDivElement>(null);
 
   const [hoverCard, setHoverCard] = useState<number | null>(null);
-  const [hoverTopic, setHoverTopic] = useState<number | null>(null);
 
   // Live values read by the animation loop; they never trigger a render.
   const hoverRef = useRef(false);
   const pointer = useRef({ x: 0.5, y: 0.5, inside: false });
 
-  const activeTopic = hoverCard !== null ? cards[hoverCard].topic : hoverTopic;
+  const activeTopic = hoverCard !== null ? cards[hoverCard].topic : null;
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -201,36 +200,20 @@ export function TopicSphere() {
         </div>
       </div>
 
-      {/* Topic legend. Hovering or focusing one lights up its cards. */}
-      <div className="mx-auto mt-6 max-w-3xl">
-        <ul className="flex flex-wrap justify-center gap-2">
-          {TOPICS.map((t, i) => {
-            const on = activeTopic === i;
-            return (
-              <li key={t.key}>
-                <button
-                  type="button"
-                  onPointerEnter={() => setHoverTopic(i)}
-                  onPointerLeave={() => setHoverTopic(null)}
-                  onFocus={() => setHoverTopic(i)}
-                  onBlur={() => setHoverTopic(null)}
-                  className={`inline-flex min-h-11 cursor-pointer items-center gap-2 border px-4 font-mono text-xs font-bold uppercase tracking-[0.12em] transition-colors ${
-                    on
-                      ? "border-[var(--cf-primary)] bg-[var(--cf-primary)] text-[var(--cf-cta-text)]"
-                      : "border-[var(--cf-border)] text-[var(--cf-text)] hover:border-[var(--cf-primary)]/60"
-                  }`}
-                >
-                  <span className={on ? "text-[var(--cf-cta-text)]/60" : "text-[var(--cf-primary)]"}>{t.short}</span>
-                  {t.name}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-        <p className="mt-4 min-h-14 text-center text-base leading-relaxed text-[var(--cf-text-muted)]" aria-live="polite">
-          {active ? active.body : "Move across the sphere to steer it. Hover a card or a topic to focus."}
-        </p>
-      </div>
+      {/* One quiet caption line instead of buttons: names the topic under the pointer. */}
+      <p
+        className="mt-4 min-h-6 text-center font-mono text-xs uppercase tracking-[0.18em]"
+        aria-hidden="true"
+      >
+        {active ? (
+          <>
+            <span className="text-[var(--cf-primary)]">{active.short}</span>
+            <span className="text-[var(--cf-text)]">{"  /  "}{active.name}</span>
+          </>
+        ) : (
+          <span className="text-[var(--cf-text-muted)]">Move across the sphere</span>
+        )}
+      </p>
     </div>
   );
 }

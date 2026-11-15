@@ -35,7 +35,7 @@ export function Ribbon({ items, label }: { items: readonly string[]; label: stri
       aria-label={label}
       className="relative overflow-hidden border-y border-[var(--cf-border)] py-6 md:py-8 [mask-image:linear-gradient(to_right,transparent,#000_10%,#000_90%,transparent)]"
     >
-      <div className="flex w-max animate-[cf-ribbon_50s_linear_infinite] hover:[animation-play-state:paused]">
+      <div className="cf-ribbon-track flex w-max">
         {renderRow(false)}
         {renderRow(true)}
       </div>

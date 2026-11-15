@@ -18,7 +18,7 @@ export default function MentorshipPage() {
     <main className="flex-1">
       {/* Hero: giant title across the top, content on the left, sphere on the right. */}
       <section aria-labelledby="mentorship-title" className="overflow-x-clip">
-        <div className="mx-auto max-w-6xl px-6 pb-16 pt-14 md:pb-24 md:pt-20 lg:grid lg:grid-cols-[1fr_minmax(0,34rem)] lg:grid-rows-[auto_1fr] lg:gap-x-10">
+        <div className="mx-auto max-w-6xl px-6 pb-14 pt-14 md:pb-16 md:pt-20 lg:grid lg:grid-cols-[1fr_minmax(0,29rem)] lg:grid-rows-[auto_1fr] lg:gap-x-10">
           {/* Title spans both columns and sits above the sphere; it ignores the pointer so cards underneath stay hoverable. */}
           <Reveal className="pointer-events-none relative z-10 lg:col-span-2 lg:col-start-1 lg:row-start-1">
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-primary-soft)]">
@@ -33,7 +33,7 @@ export default function MentorshipPage() {
           </Reveal>
 
           {/* Sphere comes before the text in the DOM so phones read title, sphere, text. */}
-          <div className="relative z-0 mt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:pt-52">
+          <div className="relative z-0 mt-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0 lg:pt-40">
             <TopicSphere />
           </div>
 
@@ -47,6 +47,21 @@ export default function MentorshipPage() {
               designed to bridge the gap between classroom theory and practical application, equipping you with the exact
               skills required for academics, personal projects, competitive programming, and upcoming placements.
             </p>
+            <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">
+              <MagneticLink
+                href="/#join"
+                className="inline-flex min-h-12 cursor-pointer items-center bg-[var(--cf-cta)] px-7 font-mono text-sm font-bold uppercase tracking-[0.12em] text-[var(--cf-cta-text)]"
+              >
+                Join the Forum
+              </MagneticLink>
+              <a
+                href="#topics"
+                className="group inline-flex min-h-12 items-center gap-2 font-mono text-sm uppercase tracking-[0.12em] text-[var(--cf-text)] transition-colors hover:text-[var(--cf-primary)]"
+              >
+                See the topics
+                <span aria-hidden="true" className="transition-transform group-hover:translate-y-0.5">↓</span>
+              </a>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -54,7 +69,7 @@ export default function MentorshipPage() {
       <Ribbon items={OUTCOMES} label="Built for" />
 
       {/* Topics we cover */}
-      <section aria-labelledby="topics-title" className="border-t border-[var(--cf-border)]">
+      <section id="topics" aria-labelledby="topics-title" className="scroll-mt-16 border-t border-[var(--cf-border)]">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
           <Reveal className="mb-8 flex flex-wrap items-end justify-between gap-4 md:mb-12">
             <div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { hasFinePointer, prefersReducedMotion } from "@/lib/media";
 
 /**
  * Precise dot plus a lagging ring. Only shown on fine pointers, hidden under reduced motion.
@@ -15,8 +16,8 @@ export function CustomCursor() {
   const [hover, setHover] = useState(false);
 
   useEffect(() => {
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const fine = hasFinePointer();
+    const reduced = prefersReducedMotion();
     if (!fine || reduced) return;
 
     const root = document.documentElement;
@@ -41,7 +42,7 @@ export function CustomCursor() {
       <motion.div
         aria-hidden="true"
         style={{ x, y, translateX: "-50%", translateY: "-50%" }}
-        className="pointer-events-none fixed left-0 top-0 z-[100] hidden h-2 w-2 bg-[var(--cf-primary)] pointer-fine:block motion-reduce:hidden"
+        className="pointer-events-none fixed left-0 top-0 z-[100] hidden h-2 w-2 bg-cf-primary pointer-fine:block motion-reduce:hidden"
       />
       <motion.div
         aria-hidden="true"

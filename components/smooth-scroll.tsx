@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { prefersReducedMotion } from "@/lib/media";
 
 /**
  * Smooth scrolling via Lenis. Skipped entirely when the user prefers reduced motion,
@@ -9,7 +10,7 @@ import Lenis from "lenis";
  */
 export function SmoothScroll() {
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = prefersReducedMotion();
     if (reduce) return;
 
     const lenis = new Lenis({ duration: 1.1, smoothWheel: true });

@@ -1,29 +1,28 @@
-"use client";
+import type { CSSProperties, ReactNode } from "react";
 
-import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-
-/** Fades and lifts its children into view once, when scrolled to. No-op under reduced motion. */
+/**
+ * Fades and lifts its children into view as they scroll in (CSS scroll-driven animation, see globals.css).
+ * Server-rendered visible, so there is no blank flash and no JS dependency. Browsers without
+ * scroll-driven animations simply show the content. `delay` is in seconds and shifts the animation range.
+ */
 export function Reveal({
   children,
   delay = 0,
   className,
-  as = "div",
+  as: Comp = "div",
+  axis = "y",
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
   as?: "div" | "li";
+  axis?: "x" | "y";
 }) {
-  const reduce = useReducedMotion();
-  const Comp = as === "li" ? motion.li : motion.div;
+  const style = { "--cf-reveal-delay": `${delay * 100}%` } as CSSProperties;
   return (
     <Comp
-      initial={reduce ? false : { opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
-      className={className}
+      style={style}
+      className={`${axis === "x" ? "cf-reveal-x" : "cf-reveal"}${className ? ` ${className}` : ""}`}
     >
       {children}
     </Comp>

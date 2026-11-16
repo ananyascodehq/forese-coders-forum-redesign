@@ -22,6 +22,12 @@ export const metadata: Metadata = {
   title: "Coders' Forum | SVCE",
   description:
     "Coders' Forum is the technical student community at Sri Venkateswara College of Engineering. Hackathons, peer learning, mentorship and emerging tech.",
+  openGraph: {
+    title: "Coders' Forum | SVCE",
+    description: "Hackathons, peer learning, mentorship and emerging tech, run by students for students.",
+    type: "website",
+    siteName: "Coders' Forum",
+  },
 };
 
 export default function RootLayout({
@@ -35,7 +41,7 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-[var(--cf-primary)] focus:px-4 focus:py-2 focus:text-[var(--cf-bg)]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-cf-primary focus:px-4 focus:py-2 focus:text-cf-bg"
         >
           Skip to content
         </a>

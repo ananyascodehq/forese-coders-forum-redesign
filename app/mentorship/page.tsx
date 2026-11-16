@@ -1,4 +1,5 @@
-import { MagneticLink } from "@/components/magnetic-link";
+import { CtaButton } from "@/components/ui/cta";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import { WhyJoin } from "@/components/mentorship/why-join";
 import { TopicSphere } from "@/components/mentorship/topic-sphere";
 import { TopicPanels } from "@/components/mentorship/topic-panels";
@@ -21,8 +22,8 @@ export default function MentorshipPage() {
         <div className="mx-auto max-w-6xl px-6 pb-14 pt-14 md:pb-16 md:pt-20 lg:grid lg:grid-cols-[1fr_minmax(0,29rem)] lg:grid-rows-[auto_1fr] lg:gap-x-10">
           {/* Title spans both columns and sits above the sphere; it ignores the pointer so cards underneath stay hoverable. */}
           <Reveal className="pointer-events-none relative z-10 lg:col-span-2 lg:col-start-1 lg:row-start-1">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-primary-soft)]">
-              <span className="text-[var(--cf-primary)]">$</span> mentorship --curriculum
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-cf-primary-soft">
+              <span className="text-cf-primary">$</span> mentorship --curriculum
             </p>
             <h1
               id="mentorship-title"
@@ -38,25 +39,20 @@ export default function MentorshipPage() {
           </div>
 
           <Reveal delay={0.1} className="mt-10 lg:col-start-1 lg:row-start-2 lg:mt-8 lg:self-start">
-            <div aria-hidden="true" className="h-px w-16 bg-[var(--cf-primary)]" />
+            <div aria-hidden="true" className="h-px w-16 bg-cf-primary" />
             <p className="mt-6 font-heading text-[clamp(1.5rem,2.6vw,2.25rem)] font-semibold leading-[1.1] tracking-[-0.02em]">
-              Classroom theory, <span className="text-[var(--cf-primary)]">meet real code.</span>
+              Classroom theory, <span className="text-cf-primary">meet real code.</span>
             </p>
-            <p className="mt-5 max-w-lg text-base leading-[1.75] text-[var(--cf-text-muted)] md:text-[1.05rem]">
+            <p className="mt-5 max-w-lg text-base leading-[1.75] text-cf-text-muted md:text-[1.05rem]">
               Our Student Mentors will guide participants through essential programming concepts. This curriculum is
               designed to bridge the gap between classroom theory and practical application, equipping you with the exact
               skills required for academics, personal projects, competitive programming, and upcoming placements.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">
-              <MagneticLink
-                href="/#join"
-                className="inline-flex min-h-12 cursor-pointer items-center bg-[var(--cf-cta)] px-7 font-mono text-sm font-bold uppercase tracking-[0.12em] text-[var(--cf-cta-text)]"
-              >
-                Join the Forum
-              </MagneticLink>
+              <CtaButton href="/#join">Join the Forum</CtaButton>
               <a
                 href="#topics"
-                className="group inline-flex min-h-12 items-center gap-2 font-mono text-sm uppercase tracking-[0.12em] text-[var(--cf-text)] transition-colors hover:text-[var(--cf-primary)]"
+                className="group inline-flex min-h-12 items-center gap-2 font-mono text-sm uppercase tracking-[0.12em] text-cf-text transition-colors hover:text-cf-primary"
               >
                 See the topics
                 <span aria-hidden="true" className="transition-transform group-hover:translate-y-0.5">↓</span>
@@ -69,13 +65,11 @@ export default function MentorshipPage() {
       <Ribbon items={OUTCOMES} label="Built for" />
 
       {/* Topics we cover */}
-      <section id="topics" aria-labelledby="topics-title" className="scroll-mt-16 border-t border-[var(--cf-border)]">
+      <section id="topics" aria-labelledby="topics-title" className="scroll-mt-16 border-t border-cf-border">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
           <Reveal className="mb-8 flex flex-wrap items-end justify-between gap-4 md:mb-12">
             <div>
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--cf-primary-soft)]">
-                Topics we cover / 04
-              </p>
+              <Eyebrow>Topics we cover / 04</Eyebrow>
               <h2
                 id="topics-title"
                 className="mt-4 font-heading text-[clamp(2.25rem,5vw,4rem)] font-bold uppercase leading-[0.95] tracking-[-0.03em]"
@@ -83,7 +77,7 @@ export default function MentorshipPage() {
                 What we teach
               </h2>
             </div>
-            <p className="max-w-xs text-sm leading-relaxed text-[var(--cf-text-muted)]">
+            <p className="max-w-xs text-sm leading-relaxed text-cf-text-muted">
               Hover a panel to open it. On a phone, tap.
             </p>
           </Reveal>
@@ -94,7 +88,7 @@ export default function MentorshipPage() {
       <WhyJoin />
 
       {/* CTA */}
-      <section aria-labelledby="mentor-cta-title" className="border-t border-[var(--cf-border)]">
+      <section id="join-final" aria-labelledby="mentor-cta-title" className="scroll-mt-16 border-t border-cf-border">
         <div className="mx-auto flex max-w-6xl flex-col items-start gap-10 px-6 py-20 md:py-28">
           <Reveal>
             <h2
@@ -103,15 +97,12 @@ export default function MentorshipPage() {
             >
               Merge into
               <br />
-              <span className="text-[var(--cf-primary)]">the forum.</span>
+              <span className="text-cf-primary">the forum.</span>
             </h2>
           </Reveal>
-          <MagneticLink
-            href="/#join"
-            className="inline-flex min-h-14 cursor-pointer items-center bg-[var(--cf-cta)] px-10 font-mono text-base font-bold uppercase tracking-[0.12em] text-[var(--cf-cta-text)]"
-          >
+          <CtaButton href="/#join" size="lg">
             Join the Forum
-          </MagneticLink>
+          </CtaButton>
         </div>
       </section>
     </main>

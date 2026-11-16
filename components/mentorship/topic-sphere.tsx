@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { ICONS } from "./topic-icons";
 import { TOPICS } from "./topics";
@@ -32,6 +32,73 @@ function buildCards(): Card[] {
 
 const cards = buildCards();
 
+type SphereCardProps = {
+  card: Card;
+  hovered: boolean;
+  lit: boolean;
+  dim: boolean;
+  onEnter: (i: number) => void;
+  onLeave: (i: number) => void;
+};
+
+/** One card on the sphere. Memoized so a hover only re-renders the cards whose visual state changed. */
+const SphereCard = memo(function SphereCard({ card: c, hovered, lit, dim, onEnter, onLeave }: SphereCardProps) {
+  const topic = TOPICS[c.topic];
+  const { caption, Icon } = ICONS[topic.key][c.variant];
+  return (
+    <div
+      className="absolute left-1/2 top-1/2"
+      style={{
+        width: `calc(var(--s, 1) * ${CARD_W}px)`,
+        height: `calc(var(--s, 1) * ${CARD_H}px)`,
+        marginLeft: `calc(var(--s, 1) * ${-CARD_W / 2}px)`,
+        marginTop: `calc(var(--s, 1) * ${-CARD_H / 2}px)`,
+        transform: `rotateY(${c.theta}deg) rotateX(${-c.phi}deg) translateZ(calc(var(--s, 1) * ${RADIUS}px)) rotateZ(${c.tilt}deg)`,
+        transformStyle: "preserve-3d",
+        backfaceVisibility: "hidden",
+      }}
+    >
+      <div
+        className="flex h-full w-full cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border p-[9%] transition-[transform,opacity,border-color,box-shadow] duration-300 ease-out"
+        style={{
+          background: "linear-gradient(160deg, var(--cf-card-from) 0%, var(--cf-card-to) 100%)",
+          borderColor: lit ? "rgba(212,255,58,0.75)" : "var(--cf-border)",
+          boxShadow: lit
+            ? "0 0 32px -6px rgba(212,255,58,0.35), inset 0 1px 0 rgba(255,255,255,0.08)"
+            : "0 12px 30px -12px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05)",
+          transform: hovered ? `translateZ(calc(var(--s, 1) * 70px)) scale(1.12)` : "translateZ(0)",
+          opacity: dim ? 0.22 : 1,
+          backfaceVisibility: "hidden",
+        }}
+        onPointerEnter={() => onEnter(c.i)}
+        onPointerLeave={() => onLeave(c.i)}
+      >
+        <span
+          className="font-mono uppercase tracking-[0.18em]"
+          style={{ fontSize: "calc(var(--s, 1) * 10px)", color: lit ? "var(--cf-primary)" : "var(--cf-text-muted)" }}
+        >
+          {topic.short}
+        </span>
+        <Icon
+          strokeWidth={1.4}
+          className="mx-auto transition-colors duration-300"
+          style={{
+            width: "calc(var(--s, 1) * 46px)",
+            height: "calc(var(--s, 1) * 46px)",
+            color: lit ? "var(--cf-primary)" : "var(--cf-text)",
+          }}
+        />
+        <span
+          className="font-mono uppercase leading-tight tracking-[0.1em]"
+          style={{ fontSize: "calc(var(--s, 1) * 9.5px)", color: "var(--cf-text-muted)" }}
+        >
+          {caption}
+        </span>
+      </div>
+    </div>
+  );
+});
+
 export function TopicSphere() {
   const reduce = useReducedMotion();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -42,6 +109,16 @@ export function TopicSphere() {
   // Live values read by the animation loop; they never trigger a render.
   const hoverRef = useRef(false);
   const pointer = useRef({ x: 0.5, y: 0.5, inside: false });
+
+  // Stable handlers so memoized cards do not re-render on unrelated state changes.
+  const onEnter = useCallback((i: number) => {
+    hoverRef.current = true;
+    setHoverCard(i);
+  }, []);
+  const onLeave = useCallback((i: number) => {
+    hoverRef.current = false;
+    setHoverCard((h) => (h === i ? null : h));
+  }, []);
 
   const activeTopic = hoverCard !== null ? cards[hoverCard].topic : null;
 
@@ -90,14 +167,21 @@ export function TopicSphere() {
       else cancelAnimationFrame(raf);
     };
 
-    const io = new IntersectionObserver(([e]) => setRunning(e.isIntersecting));
+    let inView = false;
+    const sync = () => setRunning(inView && !document.hidden);
+    const io = new IntersectionObserver(([e]) => {
+      inView = e.isIntersecting;
+      sync();
+    });
     io.observe(wrap);
+    document.addEventListener("visibilitychange", sync);
 
     return () => {
       running = false;
       cancelAnimationFrame(raf);
       io.disconnect();
       ro.disconnect();
+      document.removeEventListener("visibilitychange", sync);
     };
   }, [reduce]);
 
@@ -132,69 +216,19 @@ export function TopicSphere() {
           style={{ transformStyle: "preserve-3d", willChange: "transform" }}
         >
           {cards.map((c) => {
-            const topic = TOPICS[c.topic];
-            const { caption, Icon } = ICONS[topic.key][c.variant];
             const hovered = hoverCard === c.i;
             const lit = hovered || activeTopic === c.topic;
             const dim = activeTopic !== null && activeTopic !== c.topic;
             return (
-              <div
+              <SphereCard
                 key={c.i}
-                className="absolute left-1/2 top-1/2"
-                style={{
-                  width: `calc(var(--s, 1) * ${CARD_W}px)`,
-                  height: `calc(var(--s, 1) * ${CARD_H}px)`,
-                  marginLeft: `calc(var(--s, 1) * ${-CARD_W / 2}px)`,
-                  marginTop: `calc(var(--s, 1) * ${-CARD_H / 2}px)`,
-                  transform: `rotateY(${c.theta}deg) rotateX(${-c.phi}deg) translateZ(calc(var(--s, 1) * ${RADIUS}px)) rotateZ(${c.tilt}deg)`,
-                  transformStyle: "preserve-3d",
-                  backfaceVisibility: "hidden",
-                }}
-              >
-                <div
-                  className="flex h-full w-full cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border p-[9%] transition-[transform,opacity,border-color,box-shadow] duration-300 ease-out"
-                  style={{
-                    background: "linear-gradient(160deg, #1E1E22 0%, #121214 100%)",
-                    borderColor: lit ? "rgba(212,255,58,0.75)" : "#2B2B31",
-                    boxShadow: lit
-                      ? "0 0 32px -6px rgba(212,255,58,0.35), inset 0 1px 0 rgba(255,255,255,0.08)"
-                      : "0 12px 30px -12px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05)",
-                    transform: hovered ? `translateZ(calc(var(--s, 1) * 70px)) scale(1.12)` : "translateZ(0)",
-                    opacity: dim ? 0.22 : 1,
-                    backfaceVisibility: "hidden",
-                  }}
-                  onPointerEnter={() => {
-                    hoverRef.current = true;
-                    setHoverCard(c.i);
-                  }}
-                  onPointerLeave={() => {
-                    hoverRef.current = false;
-                    setHoverCard((h) => (h === c.i ? null : h));
-                  }}
-                >
-                  <span
-                    className="font-mono uppercase tracking-[0.18em]"
-                    style={{ fontSize: "calc(var(--s, 1) * 10px)", color: lit ? "#D4FF3A" : "#A3A096" }}
-                  >
-                    {topic.short}
-                  </span>
-                  <Icon
-                    strokeWidth={1.4}
-                    className="mx-auto transition-colors duration-300"
-                    style={{
-                      width: "calc(var(--s, 1) * 46px)",
-                      height: "calc(var(--s, 1) * 46px)",
-                      color: lit ? "#D4FF3A" : "#F2EFE6",
-                    }}
-                  />
-                  <span
-                    className="font-mono uppercase leading-tight tracking-[0.1em]"
-                    style={{ fontSize: "calc(var(--s, 1) * 9.5px)", color: "#A3A096" }}
-                  >
-                    {caption}
-                  </span>
-                </div>
-              </div>
+                card={c}
+                hovered={hovered}
+                lit={lit}
+                dim={dim}
+                onEnter={onEnter}
+                onLeave={onLeave}
+              />
             );
           })}
         </div>
@@ -207,11 +241,11 @@ export function TopicSphere() {
       >
         {active ? (
           <>
-            <span className="text-[var(--cf-primary)]">{active.short}</span>
-            <span className="text-[var(--cf-text)]">{"  /  "}{active.name}</span>
+            <span className="text-cf-primary">{active.short}</span>
+            <span className="text-cf-text">{"  /  "}{active.name}</span>
           </>
         ) : (
-          <span className="text-[var(--cf-text-muted)]">Move across the sphere</span>
+          <span className="text-cf-text-muted">Move across the sphere</span>
         )}
       </p>
     </div>

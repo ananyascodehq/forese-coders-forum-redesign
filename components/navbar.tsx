@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { Logo } from "@/components/logo";
 import { JOIN_HREF, NAV_LINKS } from "@/lib/nav";
 
 function isActive(pathname: string, href: string) {
@@ -43,12 +44,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-cf-border bg-cf-bg/90 backdrop-blur-md">
       <nav aria-label="Main" className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link href="/" className="group flex min-h-11 items-center gap-3">
-          <span
-            aria-hidden="true"
-            className="grid h-8 place-items-center bg-cf-primary px-2 font-heading text-sm font-bold tracking-tight text-cf-bg"
-          >
-            CF
-          </span>
+          <Logo className="h-9 w-auto text-cf-text transition-transform duration-300 group-hover:scale-105" />
           <span className="font-mono text-xs uppercase tracking-[0.18em] text-cf-text">
             Coders&apos; Forum
             <span className="hidden text-cf-text-muted sm:inline"> / SVCE</span>

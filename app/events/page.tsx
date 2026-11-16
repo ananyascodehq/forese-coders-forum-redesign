@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { WovenCanvas } from "@/components/events/woven-canvas";
 import { Reveal } from "@/components/reveal";
 import { AnimatedWords } from "@/components/ui/animated-words";
@@ -10,21 +9,6 @@ export const metadata = {
   title: "Events | Coders' Forum",
   description: "Hackathons and technical competitions run by students at the Coders' Forum, SVCE.",
 };
-
-/** A row of cells that light up in turn: 24 of them for a 24-hour event. Decorative. */
-function Meter({ cells }: { cells: number }) {
-  return (
-    <div aria-hidden="true" className="flex gap-1">
-      {Array.from({ length: cells }, (_, i) => (
-        <span
-          key={i}
-          className="cf-cell h-8 flex-1 rounded-sm bg-cf-primary"
-          style={{ "--cf-cell-i": i } as CSSProperties}
-        />
-      ))}
-    </div>
-  );
-}
 
 export default function EventsPage() {
   return (
@@ -68,7 +52,20 @@ export default function EventsPage() {
         </div>
       </section>
 
-      <section id="upcoming" aria-labelledby="upcoming-title" className="scroll-mt-16 border-t border-cf-border">
+      <section
+        id="upcoming"
+        aria-labelledby="upcoming-title"
+        className="relative isolate scroll-mt-16 overflow-hidden border-t border-cf-border"
+      >
+        {/* Faint dot grid that fades out toward the edges, plus a soft lime glow behind the cards */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[radial-gradient(circle,rgb(212_255_58/0.42)_1.2px,transparent_1.8px)] bg-[length:28px_28px] [mask-image:radial-gradient(ellipse_90%_75%_at_50%_50%,black_35%,transparent_85%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute left-1/2 top-1/2 -z-10 h-[34rem] w-[min(60rem,120%)] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgb(212_255_58/0.16),transparent_70%)]"
+        />
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <Reveal>
             <Eyebrow>On the way</Eyebrow>
@@ -86,7 +83,7 @@ export default function EventsPage() {
                 as="li"
                 key={event.name}
                 delay={i * 0.1}
-                className="group flex flex-col gap-10 rounded-2xl border border-cf-border bg-gradient-to-b from-cf-card-from to-cf-card-to p-7 transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-cf-primary/60 md:p-9"
+                className="group flex flex-col gap-6 rounded-2xl border border-cf-border bg-gradient-to-b from-cf-card-from to-cf-card-to p-7 transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-cf-primary/60 md:p-9"
               >
                 <div className="flex items-center justify-between">
                   <p className="inline-flex items-center gap-2 rounded-full border border-cf-primary/30 bg-cf-primary/10 px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-cf-primary-soft">
@@ -101,14 +98,17 @@ export default function EventsPage() {
                   </span>
                 </div>
 
-                <Meter cells={event.cells} />
-
-                <div className="mt-auto">
+                <div>
                   <h3 className="font-heading text-[clamp(1.75rem,3vw,2.5rem)] font-bold uppercase leading-[0.98] tracking-[-0.03em]">
                     {event.name}
                   </h3>
                   <p className="mt-4 max-w-md text-base leading-relaxed text-cf-text-muted">{event.body}</p>
                 </div>
+
+                {/* Date slot: swap this line for a live countdown once the date is confirmed. */}
+                <p className="mt-auto border-t border-cf-border pt-4 font-mono text-xs uppercase tracking-[0.14em] text-cf-text-muted">
+                  Date to be announced
+                </p>
               </Reveal>
             ))}
           </ul>

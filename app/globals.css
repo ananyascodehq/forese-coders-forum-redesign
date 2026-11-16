@@ -319,25 +319,3 @@
     opacity: 1;
   }
 }
-
-/* Event card meter (app/events/page.tsx): cells light up one after another. */
-@keyframes cf-cell {
-  0%,
-  100% {
-    opacity: 0.18;
-  }
-  35%,
-  60% {
-    opacity: 1;
-  }
-}
-.cf-cell {
-  animation: cf-cell 4.8s ease-in-out infinite;
-  animation-delay: calc(var(--cf-cell-i, 0) * 0.14s);
-}
-@media (prefers-reduced-motion: reduce) {
-  .cf-cell {
-    animation: none;
-    opacity: 0.6;
-  }
-}

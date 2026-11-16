@@ -10,10 +10,10 @@ export function Ribbon({ items, label }: { items: readonly string[]; label: stri
     <ul aria-hidden={hidden || undefined} className="flex shrink-0 items-center">
       {row.map((text, i) => (
         <li key={`${text}-${i}`} className="flex items-center">
-          <span className="whitespace-nowrap font-mono text-[0.8rem] uppercase tracking-[0.24em] text-[var(--cf-text)]/85 md:text-sm">
+          <span className="whitespace-nowrap font-mono text-[0.8rem] uppercase tracking-[0.24em] text-cf-text/85 md:text-sm">
             {text}
           </span>
-          <span aria-hidden="true" className="mx-8 text-[0.55rem] text-[var(--cf-primary)] md:mx-12">
+          <span aria-hidden="true" className="mx-8 text-[0.55rem] text-cf-primary md:mx-12">
             ◆
           </span>
         </li>
@@ -24,11 +24,11 @@ export function Ribbon({ items, label }: { items: readonly string[]; label: stri
   return (
     <section
       aria-label={label}
-      className="flex items-stretch border-y border-[var(--cf-border)] bg-[var(--cf-bg)]"
+      className="flex items-stretch border-y border-cf-border bg-cf-bg"
     >
       <p
         aria-hidden="true"
-        className="relative z-10 flex shrink-0 items-center border-r border-[var(--cf-border)] bg-[var(--cf-bg)] px-5 font-mono text-[0.7rem] uppercase tracking-[0.22em] text-[var(--cf-primary)] md:px-8"
+        className="relative z-10 flex shrink-0 items-center border-r border-cf-border bg-cf-bg px-5 font-mono text-[0.7rem] uppercase tracking-[0.22em] text-cf-primary md:px-8"
       >
         {label}
       </p>

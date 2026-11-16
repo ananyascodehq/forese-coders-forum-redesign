@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { hasFinePointer, prefersReducedMotion } from "@/lib/media";
 
 type Props = {
   /** "wordmark": glyphs resolve into the CODERS' FORUM wordmark. "compile": glyphs morph by scroll progress. */
@@ -14,6 +15,17 @@ const CHARS = "{}<>/;01=+*";
 const DIM: [number, number, number] = [44, 44, 50]; // muted grey, sits on #0B0B0C
 const BRIGHT: [number, number, number] = [212, 255, 58]; // #D4FF3A acid lime
 const PUSH_RADIUS = 110;
+const LEVELS = 64;
+// Precomputed fill styles so the draw loop does no string building per cell.
+const DIM_COLORS = Array.from({ length: LEVELS + 1 }, (_, k) => {
+  const a = k / LEVELS;
+  const ch = (i: number) => (DIM[i] + (BRIGHT[i] - DIM[i]) * a) | 0;
+  return `rgba(${ch(0)},${ch(1)},${ch(2)},${(0.3 + 0.7 * a).toFixed(3)})`;
+});
+const WORD_FILLS = Array.from(
+  { length: LEVELS + 1 },
+  (_, k) => `rgba(212,255,58,${Math.min(1, (k / LEVELS) * 0.95).toFixed(3)})`,
+);
 const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 
 /** Target brightness (0..1) for a cell in each of the four "compile" stages. */
@@ -52,8 +64,8 @@ export function GlyphField({ mode, progressRef, className }: Props) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const fine = window.matchMedia("(pointer: fine)").matches;
+    const reduced = prefersReducedMotion();
+    const fine = hasFinePointer();
 
     let w = 0;
     let h = 0;
@@ -65,6 +77,8 @@ export function GlyphField({ mode, progressRef, className }: Props) {
     let charIdx = new Uint8Array(0);
     let pointer = { x: -9999, y: -9999 };
     let running = false;
+    let inView = false;
+    let rect: DOMRect | null = null;
     let raf = 0;
     let disposed = false;
     let fam = "sans-serif";
@@ -104,9 +118,10 @@ export function GlyphField({ mode, progressRef, className }: Props) {
     };
 
     const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      w = rect.width;
-      h = rect.height;
+      rect = null;
+      const box = canvas.getBoundingClientRect();
+      w = box.width;
+      h = box.height;
       if (w < 1 || h < 1) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.floor(w * dpr);
@@ -170,7 +185,7 @@ export function GlyphField({ mode, progressRef, className }: Props) {
           const inWord = mode === "wordmark" && wordMask[i] > 0.5;
           if (inWord) {
             // Solid lime letterforms (scaled by level so they fade in) with dark code glyphs on top.
-            ctx.fillStyle = `rgba(212,255,58,${Math.min(1, a * 0.95).toFixed(3)})`;
+            ctx.fillStyle = WORD_FILLS[Math.round(Math.min(1, a) * LEVELS)];
             ctx.fillRect(c * cell, r * cell, cell, cell);
           }
 
@@ -184,11 +199,7 @@ export function GlyphField({ mode, progressRef, className }: Props) {
             continue;
           }
 
-          const R = DIM[0] + (BRIGHT[0] - DIM[0]) * a;
-          const G = DIM[1] + (BRIGHT[1] - DIM[1]) * a;
-          const B = DIM[2] + (BRIGHT[2] - DIM[2]) * a;
-          const alpha = mode === "wordmark" && wordMask[i] > 0.5 ? 1 : 0.3 + 0.7 * a;
-          ctx.fillStyle = `rgba(${R | 0},${G | 0},${B | 0},${alpha.toFixed(3)})`;
+          ctx.fillStyle = DIM_COLORS[Math.round(Math.min(1, a) * LEVELS)];
           ctx.fillText(CHARS[charIdx[i]], cx, cy);
         }
       }
@@ -208,14 +219,25 @@ export function GlyphField({ mode, progressRef, className }: Props) {
     };
 
     const onPointer = (e: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect();
+      rect ??= canvas.getBoundingClientRect();
       const inside =
         e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
       pointer = inside ? { x: e.clientX - rect.left, y: e.clientY - rect.top } : { x: -9999, y: -9999 };
     };
 
-    const io = new IntersectionObserver(([entry]) => setRunning(entry.isIntersecting));
+    // Run only while on screen and the tab is visible.
+    const sync = () => setRunning(inView && !document.hidden);
+    const io = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      sync();
+    });
     io.observe(canvas);
+    document.addEventListener("visibilitychange", sync);
+    // Page scroll moves the canvas, so the cached pointer rect must be re-read.
+    const invalidateRect = () => {
+      rect = null;
+    };
+    window.addEventListener("scroll", invalidateRect, { passive: true });
 
     const ro = new ResizeObserver(() => resize());
     ro.observe(canvas);
@@ -239,6 +261,8 @@ export function GlyphField({ mode, progressRef, className }: Props) {
       io.disconnect();
       ro.disconnect();
       window.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("scroll", invalidateRect);
+      document.removeEventListener("visibilitychange", sync);
     };
     // mode is fixed per instance; progressRef is a stable ref.
     // eslint-disable-next-line react-hooks/exhaustive-deps

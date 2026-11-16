@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/logo";
 import { JOIN_HREF, NAV_LINKS } from "@/lib/nav";
 import { COLLEGE } from "@/lib/site";
 
@@ -7,7 +8,8 @@ export function Footer() {
     <footer className="mt-auto border-t border-cf-border bg-cf-bg-elevated">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-3">
         <div>
-          <p className="font-heading text-lg font-bold">Coders&apos; Forum</p>
+          <Logo className="h-10 w-auto text-cf-text" />
+          <p className="mt-4 font-heading text-lg font-bold">Coders&apos; Forum</p>
           <p className="mt-3 max-w-xs text-sm text-cf-text-muted">
             The technical student community at {COLLEGE} (SVCE).
           </p>

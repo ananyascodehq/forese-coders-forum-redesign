@@ -1,31 +1,10 @@
-import type { CSSProperties } from "react";
 import { Reveal } from "@/components/reveal";
+import { AnimatedWords } from "@/components/ui/animated-words";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { BEFORE_AFTER, REASONS } from "@/content/why-join";
 import { JoinChecklist } from "./join-checklist";
 import { ReasonVisualView } from "./reason-visuals";
-
-/** Splits words into per-letter spans that animate in one after another (see .cf-letter in globals.css). */
-function AnimatedWords({ words, accentFrom }: { words: string[]; accentFrom: number }) {
-  let index = 0;
-  return (
-    <span aria-hidden="true">
-      {words.map((word, w) => (
-        <span
-          key={word}
-          className={`inline-block ${w >= accentFrom ? "text-cf-primary" : ""} ${w > 0 ? "ml-[0.25em]" : ""}`}
-        >
-          {word.split("").map((ch, c) => (
-            <span key={c} className="cf-letter inline-block" style={{ "--i": index++ } as CSSProperties}>
-              {ch}
-            </span>
-          ))}
-        </span>
-      ))}
-    </span>
-  );
-}
 
 export function WhyJoin() {
   return (

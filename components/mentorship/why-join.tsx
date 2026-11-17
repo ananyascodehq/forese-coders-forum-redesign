@@ -25,7 +25,7 @@ export function WhyJoin() {
           <h2
             id="why-title"
             aria-label="Why join?"
-            className="mt-6 font-heading text-[clamp(4rem,17vw,12rem)] font-bold uppercase leading-[0.85] tracking-[-0.05em]"
+            className="mt-6 font-heading text-[clamp(3.25rem,13.5vw,12rem)] font-bold uppercase leading-[0.85] tracking-[-0.05em]"
           >
             <AnimatedWords words={["Why", "join?"]} accentFrom={1} />
           </h2>
